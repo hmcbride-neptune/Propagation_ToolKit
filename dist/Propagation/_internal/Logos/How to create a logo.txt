@@ -1,0 +1,8 @@
+icon size
+	Horizontal 34
+	Vertical   36
+
+Open .png in paint
+Select the picture you want as an icon
+Click "Resize"
+Go to pixels and click "Maintain aspect ratio"

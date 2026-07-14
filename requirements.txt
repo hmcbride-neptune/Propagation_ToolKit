@@ -1,0 +1,20 @@
+# Third-party dependencies for the Propagation toolkit.
+# Install with:  pip install -r requirements.txt
+#
+# Everything else imported by the app (tkinter, os, sys, re, csv, subprocess,
+# threading, datetime, pathlib, glob, shutil, zipfile, logging, argparse,
+# contextlib, warnings, getpass, runpy) ships with the Python standard library.
+
+pandas                 # data handling / CSV & Excel processing
+numpy                  # image-array math (screenshots)
+Pillow                 # PIL: icon and screenshot image handling
+openpyxl               # Excel (.xlsx) read/write via pandas
+pywin32                # win32gui, win32con, win32com.client, pythoncom (Windows COM/window APIs)
+pywinauto              # EDX SignalPro window automation
+pyautogui              # mouse/keyboard automation
+PyGetWindow            # pygetwindow: window enumeration
+keyboard               # global hotkey capture
+pyperclip              # clipboard access
+psutil                 # process inspection (presentation tool)
+selenium               # FAA/ASR web automation
+webdriver-manager      # auto-manages the Edge WebDriver for selenium
