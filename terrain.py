@@ -23,18 +23,21 @@ def wait_for_query_results(dlg, timeout=300):
     is far more reliable than guessing a fixed delay, and scales to large
     projects that take a while to compute.
     """
-    please_wait = Desktop(backend="win32").window(title_re=".*[Pp]lease [Ww]ait.*")
-
-    # The dialog may appear a beat after the click. Catch it if we can, but a
-    # very fast query can finish before we ever see it, so don't fail if we
-    # miss it -- the wait_not below will simply return immediately.
     try:
-        please_wait.wait("visible", timeout=10)
-    except TimeoutError:
-        pass
+        please_wait = Desktop(backend="win32").window(title_re=".*[Pp]lease [Ww]ait.*")
+        
+        # The dialog may appear a beat after the click. Catch it if we can, but a
+        # very fast query can finish before we ever see it, so don't fail if we
+        # miss it -- the wait_not below will simply return immediately.
+        try:
+            please_wait.wait("visible", timeout=10)
+        except TimeoutError:
+            pass
 
-    # Block until EDX finishes computing (the "Please wait..." dialog closes).
-    please_wait.wait_not("visible", timeout=timeout)
+        # Block until EDX finishes computing (the "Please wait..." dialog closes).
+        please_wait.wait_not("visible", timeout=timeout)
+    except:
+        pass
 
     # Labels are populated once the dialog is gone; poll briefly to absorb any
     # small render lag before reading them.
