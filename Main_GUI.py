@@ -461,11 +461,27 @@ class MainGUI(tk.Tk):
         root.after(500, lambda: root.attributes('-topmost', True))
     
     def launch_measurement_analysis(self):
+        # Get out of the way before the tool drives EDX. This window is topmost
+        # (see __init__), and a topmost window fighting for focus makes the
+        # pywinauto menu_select / dialog-read steps land on the wrong window,
+        # which is why the 'No. of points' read fails when launched from here
+        # but works when the script is run directly. Match the other EDX tools.
+        self.attributes('-topmost', False)
+        self.iconify()
+
         script = "measurement_analysis"
-        try:
-            subprocess.Popen(script_cmd(script), cwd=BASE_DIR)
-        except Exception as e:
-            tk.messagebox.showerror("Error", f"Failed to start Measurement Analysis tool: {e}")
+        args = script_cmd(script)
+
+        def task():
+            try:
+                subprocess.run(args, cwd=BASE_DIR)
+            except Exception as e:
+                self.after(0, lambda: tk.messagebox.showerror(
+                    "Error", f"Failed to start Measurement Analysis tool: {e}"))
+            finally:
+                self.after(0, self.restore_window)
+
+        threading.Thread(target=task, daemon=True).start()
     
     def launch_move_data(self):
             try:

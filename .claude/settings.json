@@ -14,7 +14,11 @@
       "PowerShell($one = \"C:\\\\Users\\\\hmcbride\\\\OneDrive - Neptune Technology Group, Inc\\\\Documents\\\\Python\\\\Propagation\\\\Main_GUI.py\"; $pd = \"C:\\\\ProgramData\\\\Python\\\\Propagation\\\\Main_GUI.py\"; Write-Output \"OneDrive length: $\\(\\(Get-Item $one\\).Length\\)\"; Write-Output \"ProgramData length: $\\(\\(Get-Item $pd\\).Length\\)\"; Write-Output \"Same file \\(hardlink/symlink\\)? Comparing hashes:\"; \\(Get-FileHash $one\\).Hash; \\(Get-FileHash $pd\\).Hash; Write-Output \"--- gui_python present in ProgramData copy? ---\"; if \\(Select-String -Path $pd -Pattern 'gui_python' -Quiet\\) { \"YES\" } else { \"NO\" })",
       "PowerShell(Set-Location \"C:\\\\ProgramData\\\\Python\\\\Propagation\"; pyinstaller Propagation.spec --noconfirm --clean 2>&1 | Tee-Object -FilePath \"C:\\\\ProgramData\\\\Python\\\\Propagation\\\\build_log.txt\"; Write-Output \"EXITCODE=$LASTEXITCODE\")",
       "PowerShell($p = Start-Process -FilePath \"C:\\\\ProgramData\\\\Python\\\\Propagation\\\\dist\\\\Propagation\\\\Propagation.exe\" -PassThru; Start-Sleep -Seconds 12; if \\(-not $p.HasExited\\) { Write-Output \"RUNNING \\(pid $\\($p.Id\\)\\) - launched OK\"; Stop-Process -Id $p.Id -Force; Get-Process -Name Propagation -ErrorAction SilentlyContinue | Stop-Process -Force } else { Write-Output \"EXITED early with code $\\($p.ExitCode\\)\" })",
-      "Read(//c/ProgramData/Python/**)"
+      "Read(//c/ProgramData/Python/**)",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('measurement_analysis.py'\\).read\\(\\)\\); print\\('OK: syntax valid'\\)\")",
+      "Bash(pyinstaller --version)",
+      "Bash(pyinstaller Propagation.spec --noconfirm)",
+      "PowerShell(Get-Process -Name Propagation -ErrorAction SilentlyContinue)"
     ]
   }
 }

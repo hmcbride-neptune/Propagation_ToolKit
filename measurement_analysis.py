@@ -144,7 +144,18 @@ if __name__ == "__main__":
         edx = EDX_OPEN()
         edx.confirm_edx_signalpro_open()
         app, win = edx.get_edx_main_window()
-        no_of_points, total_points = run_measurement_analysis_and_get_metrics(app, win)  
+        no_of_points, total_points = run_measurement_analysis_and_get_metrics(app, win)
         show_and_copy(no_of_points, total_points)
     except Exception as e:
+        # When launched from Main_GUI via subprocess.Popen there is no console,
+        # so a bare print() is invisible. Show the error in a dialog instead so
+        # failures (e.g. the 'No. of points' read) are actually seen.
         print(f"Automation failed: {e}")
+        try:
+            err = tk.Tk()
+            err.withdraw()
+            err.attributes("-topmost", True)
+            messagebox.showerror("Measurement Analysis failed", str(e))
+            err.destroy()
+        except Exception:
+            pass
