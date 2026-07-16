@@ -58,9 +58,22 @@ def parse_no_of_points_from_dialog_texts(texts):
     """
     The dialog has at least one 'No. of points' label.
     We try to find the first numeric value that follows the first occurrence.
+
+    Tolerant of:
+      - the label with or without a trailing colon ("No. of points" / "No. of points:")
+      - the value being embedded in the same control ("No. of points: 1,234")
+      - the value living in one of the next few controls
     """
     for i, txt in enumerate(texts):
-        if txt == "No. of points":
+        norm = txt.rstrip(":").strip()
+        if norm == "No. of points":
+            # value on the same control, e.g. "No. of points: 1,234"
+            m = re.search(r"([\d,]+)\s*$", txt)
+            if m:
+                cleaned = m.group(1).replace(",", "")
+                if cleaned.isdigit():
+                    return int(cleaned)
+            # otherwise scan the following controls for the first integer
             for nxt in texts[i + 1:i + 6]:
                 cleaned = nxt.replace(",", "").strip()
                 if re.fullmatch(r"\d+", cleaned):
@@ -74,12 +87,23 @@ def run_measurement_analysis_and_get_metrics(app, win):
 
     click_perform_area_analysis(dlg)
 
-    # 1) Read the visible dialog results
-    texts = get_dialog_texts(dlg)
-    for i, txt in enumerate(texts):
-        if txt.strip() == "No. of points:":
-            if i + 1 < len(texts):
-                no_of_points =  int(texts[i + 1].strip().replace(",",""))
+    # 1) Read the visible dialog results.
+    #    Results can lag behind the button click, so poll the dialog until the
+    #    'No. of points' value appears instead of relying on a single sleep.
+    no_of_points = None
+    deadline = time.time() + 15  # seconds
+    while time.time() < deadline:
+        texts = get_dialog_texts(dlg)
+        no_of_points = parse_no_of_points_from_dialog_texts(texts)
+        if no_of_points is not None:
+            break
+        time.sleep(0.5)
+
+    if no_of_points is None:
+        raise RuntimeError(
+            "Could not read 'No. of points' from the Measurement Analysis dialog "
+            "(value never appeared). Dialog texts were: " + repr(texts)
+        )
 
     file_path = dlg.child_window(class_name="Edit").window_text().strip()
     with open(file_path, "r") as f:
@@ -97,7 +121,7 @@ def run_measurement_analysis_and_get_metrics(app, win):
 def show_and_copy(no_of_points, total_points):
     percentage = round(no_of_points / total_points * 100, 2)
     message = f"{percentage}% ({no_of_points}/{total_points})\n\n(Press Ctrl+v or Right-Click to continue)"
-
+    
     pyperclip.copy(str(no_of_points))
 
     root = tk.Tk()
