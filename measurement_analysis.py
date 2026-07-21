@@ -88,14 +88,18 @@ def run_measurement_analysis_and_get_metrics(app, win):
     click_perform_area_analysis(dlg)
 
     # 1) Read the visible dialog results.
-    #    Results can lag behind the button click, so poll the dialog until the
-    #    'No. of points' value appears instead of relying on a single sleep.
+    #    On large projects the area analysis can take a while: the dialog often
+    #    shows 'No. of points' as 0 while EDX is still computing, then climbs
+    #    above 0 once it finishes. So poll until the value is > 0 rather than
+    #    breaking on the first value seen. Wait up to 1 minute; if it is still 0
+    #    after that, treat it as a genuine zero-point result and proceed.
     no_of_points = None
-    deadline = time.time() + 15  # seconds
+    texts = []
+    deadline = time.time() + 60  # up to 1 minute for large projects
     while time.time() < deadline:
         texts = get_dialog_texts(dlg)
         no_of_points = parse_no_of_points_from_dialog_texts(texts)
-        if no_of_points is not None:
+        if no_of_points:  # value present and > 0
             break
         time.sleep(0.5)
 
