@@ -63,7 +63,10 @@ a = Analysis(
     ["Main_GUI.py"],
     pathex=[],
     binaries=[],
-    datas=[("Logos", "Logos")],        # bundle icons next to the exe
+    datas=[
+        ("Logos", "Logos"),                      # bundle icons next to the exe
+        ("drivers\\msedgedriver.exe", "."),       # Edge WebDriver for faa_tool.py
+    ],
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},

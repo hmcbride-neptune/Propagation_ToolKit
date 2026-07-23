@@ -18,7 +18,8 @@
       "Bash(python -c \"import ast; ast.parse\\(open\\('measurement_analysis.py'\\).read\\(\\)\\); print\\('OK: syntax valid'\\)\")",
       "Bash(pyinstaller --version)",
       "Bash(pyinstaller Propagation.spec --noconfirm)",
-      "PowerShell(Get-Process -Name Propagation -ErrorAction SilentlyContinue)"
+      "PowerShell(Get-Process -Name Propagation -ErrorAction SilentlyContinue)",
+      "Bash(git add *)"
     ]
   }
 }
